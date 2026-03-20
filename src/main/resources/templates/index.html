@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meu Dashboard de Estudos</title>
-    <!-- Tailwind CSS via CDN -->
+    <title>Task Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -25,12 +24,9 @@
           document.documentElement.classList.remove('dark')
         }
     </script>
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 </head>
 <body class="text-slate-800 bg-slate-50 dark:bg-slate-900 dark:text-slate-200 antialiased min-h-screen flex flex-col transition-colors duration-300">
-
-    <!-- Navbar -->
     <nav class="bg-teal-600 dark:bg-slate-800 text-white shadow-md transition-colors duration-300 border-b border-teal-700 dark:border-slate-700">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
@@ -42,7 +38,6 @@
                         <span class="font-bold text-lg sm:text-xl tracking-tight truncate max-w-[200px] sm:max-w-none">Dashboard</span>
                     </div>
                 </div>
-                <!-- Dark Mode Toggle Button -->
                 <button onclick="toggleDarkMode()" aria-label="Alternar Modo Escuro" class="p-2 ml-2 sm:ml-4 rounded-full bg-teal-500 hover:bg-teal-700 dark:bg-slate-700 dark:hover:bg-slate-600 text-white transition-all transform hover:scale-105 shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 dark:focus:ring-offset-slate-800 dark:focus:ring-slate-400 flex-shrink-0">
                     <svg id="themeIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
@@ -51,17 +46,11 @@
             </div>
         </div>
     </nav>
-
-    <!-- Main Content -->
     <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
-        
-        <!-- Header Section -->
         <div class="mb-6 sm:mb-8 text-center sm:text-left">
             <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white transition-colors">Bom dia, Estudante!</h1>
             <p class="mt-2 text-sm text-slate-600 dark:text-slate-400 transition-colors">Confira suas tarefas e compromissos universitários.</p>
         </div>
-
-        <!-- AI Motivational Banner -->
         <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm hover:shadow-md mb-8 sm:mb-10 border-l-4 sm:border-l-8 border-teal-400 dark:border-teal-500 transform transition-all duration-300 hover:-translate-y-1">
             <div class="p-5 sm:p-8 flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left">
                 <div class="flex-shrink-0 bg-teal-50 dark:bg-slate-700/50 rounded-full p-3 mb-3 sm:mb-0 sm:mr-4 transition-colors">
@@ -77,13 +66,9 @@
                 </div>
             </div>
         </div>
-
-        <!-- Tasks Section -->
         <div class="mb-6 flex justify-between items-center">
             <h2 class="text-2xl font-bold text-slate-800 dark:text-white mb-4 sm:mb-0 transition-colors">Tarefas Visíveis (<span th:text="${#lists.size(tasks)}">0</span>)</h2>
         </div>
-
-        <!-- Empty State -->
         <div th:if="${#lists.isEmpty(tasks)}" class="bg-white dark:bg-slate-800 rounded-lg shadow-sm p-8 text-center border border-slate-100 dark:border-slate-700 transition-colors">
             <svg class="mx-auto h-12 w-12 text-slate-400 dark:text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
@@ -91,8 +76,6 @@
             <h3 class="mt-2 text-lg font-medium text-slate-900 dark:text-white">Lista Zerada</h3>
             <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Nenhum compromisso pendente no horizonte. Bom descanso!</p>
         </div>
-
-        <!-- Tasks Grid -->
         <div th:unless="${#lists.isEmpty(tasks)}" class="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
             <div th:each="task : ${tasks}" 
                  th:data-title="${task.title}" 
@@ -128,8 +111,6 @@
         </div>
 
     </main>
-
-    <!-- Footer -->
     <footer class="bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 mt-auto transition-colors">
         <div class="max-w-7xl mx-auto py-6 px-4">
             <p class="text-center text-sm font-medium text-slate-400 dark:text-slate-500">
@@ -137,8 +118,6 @@
             </p>
         </div>
     </footer>
-
-    <!-- Task Detail Modal -->
     <div id="taskModal" class="hidden fixed inset-0 bg-slate-900/60 dark:bg-slate-900/80 overflow-y-auto h-full w-full z-50 transition-opacity duration-300 backdrop-blur-sm">
         <div class="relative top-20 mx-auto p-6 w-11/12 md:w-3/4 max-w-2xl shadow-2xl rounded-2xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 transition-colors">
             <div class="flex justify-between items-center pb-4 border-b border-slate-100 dark:border-slate-700">

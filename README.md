@@ -1,4 +1,4 @@
-# 🎓 Study Dashboard (Painel de Estudos Inteligente)
+# ✅ Task Dashboard (Painel de Atividades Inteligente)
 
 ## 📌 Sobre a Autoria do Projeto
 **💡 Idealização e Escopo:** SixS2 
@@ -12,7 +12,7 @@ Toda a ideia inicial, as regras de negócio e a arquitetura visual foram pensada
 ---
 
 ## ⚙️ Como a Plataforma Funciona?
-O **Study Dashboard** é uma plataforma web pessoal projetada para atuar como um organizador e assistente acadêmico definitivo. O sistema une três fontes principais:
+O **Task Dashboard** é uma plataforma web pessoal projetada para atuar como um organizador e assistente acadêmico de tarefas. O sistema une três fontes principais:
 
 1. **Coleta de Dados Automática:** O núcleo em Java (backend) se conecta ao calendário oficial do Portal AVA (usando a assinatura XML/ICS do estudante). Ele varre todos os eventos universitários e joga tudo para uma lista local.
 2. **Processamento e Filtragem:** O sistema ignora eventos passados, calcula a urgência de cada prazo (colorindo as tarefas na sua tela de verde pra vermelho) e extrai links perdidos no meio dos textos (como links do Teams ou de questionários).
