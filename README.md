@@ -1,18 +1,25 @@
-# 🎓 Study Dashboard (Meu Painel de Estudos Inteligente)
+# 🎓 Study Dashboard (Painel de Estudos Inteligente)
 
-## 💡 Motivação e Objetivo
-Criei este projeto para resolver um problema pessoal real: a extrema dificuldade e ansiedade de acompanhar dezenas de prazos e atividades da universidade (Católica) dispersos pelo portal acadêmico (AVA/D2L Brightspace). 
+## 📌 Sobre a Autoria do Projeto
+**💡 Idealização e Escopo:** SixS2 
+**💻 Desenvolvimento e Código:** Inteligência Artificial (Agente Autônomo)
 
-O objetivo principal desta aplicação é **centralizar, organizar e priorizar** meus estudos de forma inteligente e automatizada. Ao invés de perder tempo abrindo o portal repetidas vezes e caçando o que está vencendo, o sistema puxa todos os dados por mim e cria uma hierarquia visual de urgência.
+Toda a ideia inicial, as regras de negócio e a arquitetura visual foram pensadas por mim para resolver um problema diário com a faculdade. No entanto, **todo o código-fonte (Java, HTML, Tailwind) deste projeto foi gerado e digitado do zero pela Inteligência Artificial**, atuando sob minha coordenação e instruções detalhadas em chat.
 
-## 🧠 Por que integrar Inteligência Artificial?
-Apenas listar tarefas como um calendário comum não era o suficiente para impulsionar minha produtividade. Eu queria algo que me trouxesse engajamento. 
-Para resolver isso, integrei a API do **Google Gemini 2.5 Flash**. A Inteligência Artificial analisa a ementa ou descrição de cada quiz/atividade (extraídos do próprio feed da faculdade) e atua como um "mentor virtual". Ela gera dicas motivacionais, alertas sobre o nível de foco exigido e conselhos específicos baseados na matéria que preciso estudar naquele dia!
+> ⚠️ **Aviso Importante sobre Inteligência Artificial:** 
+> Este repositório foi construído com o objetivo central de **testar, praticar, conhecer e estudar** o estado atual da Arte das IAs na programação. **Eu NÃO recomendo que você crie códigos ou sistemas inteiros 100% baseados em Inteligências Artificiais** de forma cega. A IA comete erros, toma decisões limitadas e pode gerar gargalos se você não souber o que está acontecendo por trás das cortinas. Use ferramentas de IA para acelerar seus estudos, não para substituir seu conhecimento técnico!
 
-## 🛠️ Como o ecossistema foi construído
-O desenvolvimento do projeto uniu a prática de Engenharia de Software com a necessidade do dia a dia:
+---
 
-- **Backend (O Cérebro):** Desenvolvido em **Java 17 operando com Spring Boot**. Ele consome assinaturas `XML/ICS`, filtra lixos e atividades passadas, e faz orquestrações complexas. Implementei um *Cache em Memória RAM de 5 minutos* para garantir respostas em milissegundos na tela, esticando a cota grátis da IA e poupando banda.
-- **Frontend (Interface e UX):** Criado com **Thymeleaf e Tailwind CSS**. Criei um design altamente focado e relaxante (`Teal`/`Slate`), totalmente "Mobile First" (perfeitamente alinhado em celulares) e implementei um Dark Mode isolado via `localStorage`.
+## ⚙️ Como a Plataforma Funciona?
+O **Study Dashboard** é uma plataforma web pessoal projetada para atuar como um organizador e assistente acadêmico definitivo. O sistema une três fontes principais:
 
-> **Status:** Repositório de código restrito a estudo pessoal e uso particular de rotina. Nenhuma chave secreta ou API vaza neste código-fonte.
+1. **Coleta de Dados Automática:** O núcleo em Java (backend) se conecta ao calendário oficial do Portal AVA (usando a assinatura XML/ICS do estudante). Ele varre todos os eventos universitários e joga tudo para uma lista local.
+2. **Processamento e Filtragem:** O sistema ignora eventos passados, calcula a urgência de cada prazo (colorindo as tarefas na sua tela de verde pra vermelho) e extrai links perdidos no meio dos textos (como links do Teams ou de questionários).
+3. **Cérebro de IA (Mentor):** Ao invés de apenas mostrar a ementa da prova, o Dashboard envia a descrição exata da disciplina para a API . A IA assume o papel de "Mentor Virtual", retornando mensagens únicas com dicas encorajadoras focadas na atividade daquele dia.
+
+## 🛠️ Tecnologias Utilizadas
+- **Backend (O Motor):** Java 17 com Spring Boot 3. Usa `ical4j` para converter calendários e implementa um *Cache em Memória RAM* para garantir respostas instantâneas sem estourar o limite de acessos da IA do Google.
+- **Frontend (Interface e UX):** Thymeleaf, JavaScript Vanilla e Tailwind CSS (Mobile First com Dark Mode nativo isolado).
+
+> **Status:** Repositório de código restrito a estudo pessoal e experimentação de IA. Credenciais e tokens sensíveis não estão versionados neste código por segurança.
