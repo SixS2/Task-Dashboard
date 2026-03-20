@@ -1,6 +1,6 @@
-# ✅ Task Dashboard 
+# ✅ Task Dashboard (BETA)
 
-🔗 **Acesso ao Projeto Online:** [Aguardando Link do Deploy...]()
+🔗 **Acesso ao Projeto Online:** [Tarefas](https://task-dashboard-1-obkd.onrender.com)
 
 ## 📌 Sobre a Autoria do Projeto
 **💡 Idealização e Escopo:** SixS2 
