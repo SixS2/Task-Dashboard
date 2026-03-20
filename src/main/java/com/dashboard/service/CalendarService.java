@@ -8,7 +8,6 @@ import net.fortuna.ical4j.model.Property;
 import net.fortuna.ical4j.model.component.VEvent;
 import net.fortuna.ical4j.model.property.DtEnd;
 import net.fortuna.ical4j.model.property.DtStart;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +26,6 @@ public class CalendarService {
 
     private final AiService aiService;
 
-    @Autowired
     public CalendarService(AiService aiService) {
         this.aiService = aiService;
     }
@@ -40,6 +38,7 @@ public class CalendarService {
     private List<TaskDto> cachedTasks = null;
     private long lastFetchTime = 0;
     private static final long CACHE_DURATION_MS = 5 * 60 * 1000; // 5 minutos
+    private static final java.util.regex.Pattern URL_PATTERN = java.util.regex.Pattern.compile("https?://[^\\s\\r\\n]+");
 
     public List<TaskDto> getUpcomingTasks() {
         if (cachedTasks != null && (System.currentTimeMillis() - lastFetchTime < CACHE_DURATION_MS)) {
@@ -60,21 +59,15 @@ public class CalendarService {
                 
                 DtStart dtStart = event.getStartDate();
                 if (dtStart != null && dtStart.getDate() != null) {
-                    ZonedDateTime eventDate;
                     
                     // Handle converting the ical4j date to ZonedDateTime securely
-                    if (dtStart.getDate() instanceof net.fortuna.ical4j.model.DateTime) {
-                        eventDate = ZonedDateTime.ofInstant(dtStart.getDate().toInstant(), ZoneId.systemDefault());
-                    } else {
-                        // It's just a Date
-                        eventDate = ZonedDateTime.ofInstant(dtStart.getDate().toInstant(), ZoneId.systemDefault());
-                    }
+                    ZonedDateTime eventDate = ZonedDateTime.ofInstant(dtStart.getDate().toInstant(), ZoneId.systemDefault());
 
                     if (!eventDate.isBefore(past30Days) && eventDate.isBefore(in30Days)) {
                         String summary = event.getSummary() != null ? event.getSummary().getValue() : "Sem Título";
                         String rawDescription = event.getDescription() != null ? event.getDescription().getValue() : "";
                         String url = "";
-                        java.util.regex.Matcher matcher = java.util.regex.Pattern.compile("https?://[^\\s\\r\\n]+").matcher(rawDescription);
+                        java.util.regex.Matcher matcher = URL_PATTERN.matcher(rawDescription);
                         if (matcher.find()) {
                             url = matcher.group();
                         }
@@ -107,12 +100,7 @@ public class CalendarService {
                         
                         DtEnd dtEnd = event.getEndDate();
                         if (dtEnd != null && dtEnd.getDate() != null) {
-                            ZonedDateTime endDate;
-                            if (dtEnd.getDate() instanceof net.fortuna.ical4j.model.DateTime) {
-                                endDate = ZonedDateTime.ofInstant(dtEnd.getDate().toInstant(), ZoneId.systemDefault());
-                            } else {
-                                endDate = ZonedDateTime.ofInstant(dtEnd.getDate().toInstant(), ZoneId.systemDefault());
-                            }
+                            ZonedDateTime endDate = ZonedDateTime.ofInstant(dtEnd.getDate().toInstant(), ZoneId.systemDefault());
                             dto.setEndDateTime(endDate);
                             dto.setFormattedEndDate(endDate.format(FORMATTER));
                         } else {
@@ -129,7 +117,7 @@ public class CalendarService {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println("Erro ao buscar calendário: " + e.getMessage());
             // Retorna lista vazia em caso de falha.
         }
         

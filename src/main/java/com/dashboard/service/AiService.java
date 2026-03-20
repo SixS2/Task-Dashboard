@@ -54,6 +54,7 @@ public class AiService {
 
     private final Map<String, String> cache = new java.util.concurrent.ConcurrentHashMap<>();
 
+    @SuppressWarnings("unchecked")
     public void fillInsights(List<TaskDto> tasks) {
         if (apiKey == null || apiKey.equals("YOUR_API_KEY_HERE") || apiKey.isEmpty()) return;
 
