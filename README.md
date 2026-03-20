@@ -18,6 +18,9 @@ O **Task Dashboard** é uma plataforma web pessoal projetada para atuar como um 
 2. **Processamento e Filtragem:** O sistema ignora eventos passados, calcula a urgência de cada prazo (colorindo as tarefas na sua tela de verde pra vermelho) e extrai links perdidos no meio dos textos (como links do Teams ou de questionários).
 3. **Cérebro de IA (Mentor):** Ao invés de apenas mostrar a ementa da prova, o Dashboard envia a descrição exata da disciplina para a API . A IA assume o papel de "Mentor Virtual", retornando mensagens únicas com dicas encorajadoras focadas na atividade daquele dia.
 
+## 🎯 Público-Alvo e Futuro
+Este código será utilizado para a turma de **ADS (Análise e Desenvolvimento de Sistemas)**, com foco inicial na **turma da manhã que tem aula aos Sábados**. Novas funcionalidades e futuras atualizações serão desenvolvidas e integradas com o passar do tempo!
+
 ## 🛠️ Tecnologias Utilizadas
 - **Backend (O Motor):** Java 17 com Spring Boot 3. Usa `ical4j` para converter calendários e implementa um *Cache em Memória RAM* para garantir respostas instantâneas sem estourar o limite de acessos da IA do Google.
 - **Frontend (Interface e UX):** Thymeleaf, JavaScript Vanilla e Tailwind CSS (Mobile First com Dark Mode nativo isolado).
