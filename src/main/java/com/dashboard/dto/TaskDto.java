@@ -6,9 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+
 public class TaskDto implements Comparable<TaskDto> {
     private String title;
     private String course;
@@ -19,6 +17,47 @@ public class TaskDto implements Comparable<TaskDto> {
     private String formattedDate;
     private String formattedEndDate;
     private String aiInsight;
+
+    public TaskDto() {}
+
+    public TaskDto(String title, String course, String url, String description, ZonedDateTime startDateTime, ZonedDateTime endDateTime, String formattedDate, String formattedEndDate, String aiInsight) {
+        this.title = title;
+        this.course = course;
+        this.url = url;
+        this.description = description;
+        this.startDateTime = startDateTime;
+        this.endDateTime = endDateTime;
+        this.formattedDate = formattedDate;
+        this.formattedEndDate = formattedEndDate;
+        this.aiInsight = aiInsight;
+    }
+
+    public String getTitle() { return title; }
+    public void setTitle(String title) { this.title = title; }
+
+    public String getCourse() { return course; }
+    public void setCourse(String course) { this.course = course; }
+
+    public String getUrl() { return url; }
+    public void setUrl(String url) { this.url = url; }
+
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
+
+    public ZonedDateTime getStartDateTime() { return startDateTime; }
+    public void setStartDateTime(ZonedDateTime startDateTime) { this.startDateTime = startDateTime; }
+
+    public ZonedDateTime getEndDateTime() { return endDateTime; }
+    public void setEndDateTime(ZonedDateTime endDateTime) { this.endDateTime = endDateTime; }
+
+    public String getFormattedDate() { return formattedDate; }
+    public void setFormattedDate(String formattedDate) { this.formattedDate = formattedDate; }
+
+    public String getFormattedEndDate() { return formattedEndDate; }
+    public void setFormattedEndDate(String formattedEndDate) { this.formattedEndDate = formattedEndDate; }
+
+    public String getAiInsight() { return aiInsight; }
+    public void setAiInsight(String aiInsight) { this.aiInsight = aiInsight; }
     
     @Override
     public int compareTo(TaskDto o) {

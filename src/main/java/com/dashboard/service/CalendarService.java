@@ -16,7 +16,7 @@ import java.net.URI;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -51,8 +51,6 @@ public class CalendarService {
             Calendar calendar = builder.build(inputStream);
 
             ZonedDateTime now = ZonedDateTime.now(ZoneId.systemDefault());
-            ZonedDateTime past30Days = now.minus(30, ChronoUnit.DAYS).truncatedTo(ChronoUnit.DAYS);
-            ZonedDateTime in30Days = now.plus(30, ChronoUnit.DAYS);
 
             for (Object componentObj : calendar.getComponents(Component.VEVENT)) {
                 VEvent event = (VEvent) componentObj;
@@ -63,8 +61,7 @@ public class CalendarService {
                     // Handle converting the ical4j date to ZonedDateTime securely
                     ZonedDateTime eventDate = ZonedDateTime.ofInstant(dtStart.getDate().toInstant(), ZoneId.systemDefault());
 
-                    if (!eventDate.isBefore(past30Days) && eventDate.isBefore(in30Days)) {
-                        String summary = event.getSummary() != null ? event.getSummary().getValue() : "Sem Título";
+                    String summary = event.getSummary() != null ? event.getSummary().getValue() : "Sem Título";
                         String rawDescription = event.getDescription() != null ? event.getDescription().getValue() : "";
                         String url = "";
                         java.util.regex.Matcher matcher = URL_PATTERN.matcher(rawDescription);
@@ -113,7 +110,6 @@ public class CalendarService {
                         }
                         
                         tasks.add(dto);
-                    }
                 }
             }
         } catch (Exception e) {
