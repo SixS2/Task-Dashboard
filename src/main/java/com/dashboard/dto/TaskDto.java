@@ -2,9 +2,6 @@ package com.dashboard.dto;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 
 public class TaskDto implements Comparable<TaskDto> {
