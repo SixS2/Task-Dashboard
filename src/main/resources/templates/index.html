@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org" class="transition-colors duration-300">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Dashboard de Estudos</title>
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+        
+        // Dark mode setup before page load to prevent flicker
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+          document.documentElement.classList.add('dark')
+        } else {
+          document.documentElement.classList.remove('dark')
+        }
+    </script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="text-slate-800 bg-slate-50 dark:bg-slate-900 dark:text-slate-200 antialiased min-h-screen flex flex-col transition-colors duration-300">
+
+    <!-- Navbar -->
+    <nav class="bg-teal-600 dark:bg-slate-800 text-white shadow-md transition-colors duration-300 border-b border-teal-700 dark:border-slate-700">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center w-full justify-between sm:w-auto">
+                    <div class="flex items-center overflow-hidden">
+                        <svg class="h-6 w-6 sm:h-8 sm:w-8 mr-2 sm:mr-3 text-teal-200 dark:text-teal-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                        </svg>
+                        <span class="font-bold text-lg sm:text-xl tracking-tight truncate max-w-[200px] sm:max-w-none">Dashboard</span>
+                    </div>
+                </div>
+                <!-- Dark Mode Toggle Button -->
+                <button onclick="toggleDarkMode()" aria-label="Alternar Modo Escuro" class="p-2 ml-2 sm:ml-4 rounded-full bg-teal-500 hover:bg-teal-700 dark:bg-slate-700 dark:hover:bg-slate-600 text-white transition-all transform hover:scale-105 shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 dark:focus:ring-offset-slate-800 dark:focus:ring-slate-400 flex-shrink-0">
+                    <svg id="themeIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+        
+        <!-- Header Section -->
+        <div class="mb-6 sm:mb-8 text-center sm:text-left">
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white transition-colors">Bom dia, Estudante!</h1>
+            <p class="mt-2 text-sm text-slate-600 dark:text-slate-400 transition-colors">Confira suas tarefas e compromissos universitários.</p>
+        </div>
+
+        <!-- AI Motivational Banner -->
+        <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm hover:shadow-md mb-8 sm:mb-10 border-l-4 sm:border-l-8 border-teal-400 dark:border-teal-500 transform transition-all duration-300 hover:-translate-y-1">
+            <div class="p-5 sm:p-8 flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left">
+                <div class="flex-shrink-0 bg-teal-50 dark:bg-slate-700/50 rounded-full p-3 mb-3 sm:mb-0 sm:mr-4 transition-colors">
+                    <svg class="h-8 w-8 text-teal-600 dark:text-teal-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="text-lg leading-6 font-bold text-slate-900 dark:text-white mb-1 transition-colors">Dica da IA Assistente</h3>
+                    <p class="text-slate-700 dark:text-slate-300 text-md leading-relaxed transition-colors" th:text="${aiMessage}">
+                        Carregando mensagem motivacional...
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tasks Section -->
+        <div class="mb-6 flex justify-between items-center">
+            <h2 class="text-2xl font-bold text-slate-800 dark:text-white mb-4 sm:mb-0 transition-colors">Tarefas Visíveis (<span th:text="${#lists.size(tasks)}">0</span>)</h2>
+        </div>
+
+        <!-- Empty State -->
+        <div th:if="${#lists.isEmpty(tasks)}" class="bg-white dark:bg-slate-800 rounded-lg shadow-sm p-8 text-center border border-slate-100 dark:border-slate-700 transition-colors">
+            <svg class="mx-auto h-12 w-12 text-slate-400 dark:text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+            <h3 class="mt-2 text-lg font-medium text-slate-900 dark:text-white">Lista Zerada</h3>
+            <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Nenhum compromisso pendente no horizonte. Bom descanso!</p>
+        </div>
+
+        <!-- Tasks Grid -->
+        <div th:unless="${#lists.isEmpty(tasks)}" class="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+            <div th:each="task : ${tasks}" 
+                 th:data-title="${task.title}" 
+                 th:data-course="${task.course}" 
+                 th:data-url="${task.url}" 
+                 th:data-desc="${task.description}" 
+                 th:data-date="${task.formattedDate}" 
+                 th:data-enddate="${task.formattedEndDate}" 
+                 th:data-insight="${task.aiInsight}" 
+                 onclick="openTaskModal(this.getAttribute('data-title'), this.getAttribute('data-course'), this.getAttribute('data-url'), this.getAttribute('data-desc'), this.getAttribute('data-date'), this.getAttribute('data-enddate'), this.getAttribute('data-insight'))" 
+                 class="bg-white dark:bg-slate-800 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 border border-slate-100 dark:border-slate-700 flex flex-col cursor-pointer group transform hover:-translate-y-1">
+                <div class="p-6 flex-grow">
+                     <div class="flex items-center justify-between mb-4">
+                        <span class="px-3 py-1 text-xs font-semibold rounded-full whitespace-nowrap transition-colors"
+                              th:classappend="${task.daysUntilDue < 0 ? 'bg-red-100 text-red-800 border border-red-200 dark:bg-red-900/40 dark:text-red-300 dark:border-red-900/50' : (task.daysUntilDue <= 2 ? 'bg-red-50 text-red-700 border border-red-100 dark:bg-red-900/30 dark:text-red-400 dark:border-red-900/40' : (task.daysUntilDue <= 5 ? 'bg-orange-50 text-orange-700 border border-orange-100 dark:bg-orange-900/30 dark:text-orange-400 dark:border-orange-900/40' : (task.daysUntilDue <= 10 ? 'bg-yellow-50 text-yellow-700 border border-yellow-100 dark:bg-yellow-900/30 dark:text-yellow-400 dark:border-yellow-900/40' : 'bg-teal-50 text-teal-700 border border-teal-100 dark:bg-teal-900/30 dark:text-teal-400 dark:border-teal-900/40')))}"
+                              th:text="${task.formattedDeadline}">
+                            12/10/2026 14:00
+                        </span>
+                    </div>
+                    <p class="text-xs font-bold text-teal-600 dark:text-teal-500 mb-1 uppercase tracking-wider" th:if="${task.course != 'Geral'}" th:text="${task.course}">MATÉRIA</p>
+                    <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2 transition-colors group-hover:text-teal-600 dark:group-hover:text-teal-400" th:text="${task.title}">Título da Tarefa</h3>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 line-clamp-3 transition-colors" th:text="${task.description}">Descrição</p>
+                </div>
+                <div class="bg-slate-50 dark:bg-slate-800/60 px-6 py-4 border-t border-slate-100 dark:border-slate-700 rounded-b-xl transition-colors">
+                    <div class="flex items-center text-sm text-teal-600 dark:text-teal-400 font-medium opacity-80 group-hover:opacity-100">
+                        <svg class="mr-1.5 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        Agendado
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 mt-auto transition-colors">
+        <div class="max-w-7xl mx-auto py-6 px-4">
+            <p class="text-center text-sm font-medium text-slate-400 dark:text-slate-500">
+                Six
+            </p>
+        </div>
+    </footer>
+
+    <!-- Task Detail Modal -->
+    <div id="taskModal" class="hidden fixed inset-0 bg-slate-900/60 dark:bg-slate-900/80 overflow-y-auto h-full w-full z-50 transition-opacity duration-300 backdrop-blur-sm">
+        <div class="relative top-20 mx-auto p-6 w-11/12 md:w-3/4 max-w-2xl shadow-2xl rounded-2xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 transition-colors">
+            <div class="flex justify-between items-center pb-4 border-b border-slate-100 dark:border-slate-700">
+                <p id="modalDate" class="text-sm font-semibold text-teal-600 dark:text-teal-400"></p>
+                <div class="cursor-pointer z-50 p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-white transition-colors" onclick="closeModal()">
+                    <svg class="fill-current" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 18 18">
+                        <path d="M14.53 4.53l-1.06-1.06L9 7.94 4.53 3.47 3.47 4.53 7.94 9l-4.47 4.47 1.06 1.06L9 10.06l4.47 4.47 1.06-1.06L10.06 9z"></path>
+                    </svg>
+                </div>
+            </div>
+            <div class="mt-5">
+                <h3 id="modalTitle" class="text-2xl font-bold text-slate-900 dark:text-white mb-1 transition-colors">Título</h3>
+                <p id="modalCourse" class="text-sm font-semibold text-slate-500 dark:text-slate-400 mb-4 uppercase tracking-wider"></p>
+                <div class="bg-slate-50 dark:bg-slate-900/50 rounded-xl p-5 mb-5 border border-slate-100 dark:border-slate-800 transition-colors">
+                    <p id="modalDesc" class="text-slate-700 dark:text-slate-300 text-base leading-relaxed whitespace-pre-line transition-colors">Descrição</p>
+                </div>
+                
+                <div class="pt-2">
+                    <div id="aiInsightResult" class="bg-teal-50 border border-teal-100 text-teal-900 dark:bg-teal-900/20 dark:border-teal-800/50 dark:text-teal-200 rounded-xl p-5 font-medium flex items-start gap-3 transition-colors shadow-inner">
+                        <svg class="w-6 h-6 text-teal-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                        <span id="aiInsightText" class="leading-relaxed"></span>
+                    </div>
+                </div>
+                
+                <div class="mt-6 flex flex-col sm:flex-row sm:justify-end gap-3 border-t border-slate-100 dark:border-slate-700 pt-5">
+                    <a id="modalLink" href="#" target="_blank" class="hidden w-full sm:w-auto px-5 py-3 sm:py-2.5 rounded-lg text-sm font-semibold text-white bg-teal-600 hover:bg-teal-700 transition-colors shadow-sm hover:shadow flex items-center justify-center gap-2">
+                        Acessar Atividade
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                    </a>
+                    <button type="button" class="w-full sm:w-auto px-5 py-3 sm:py-2.5 rounded-lg text-sm font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600 transition-colors" onclick="closeModal()">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openTaskModal(title, course, url, desc, date, endDate, aiInsight) {
+            document.getElementById('modalTitle').innerText = title;
+            document.getElementById('modalCourse').innerText = course !== 'Geral' ? course : '';
+            document.getElementById('modalDesc').innerText = desc || 'Sem descrição detalhada cadastrada.';
+            
+            let dateStr = "Iniciado: " + date;
+            if (endDate && endDate.trim() !== "") {
+                dateStr += " | Prazo: " + endDate;
+            }
+            document.getElementById('modalDate').innerText = dateStr;
+            
+            // Link button
+            const linkBtn = document.getElementById('modalLink');
+            if (url && url.trim() !== '') {
+                linkBtn.href = url;
+                linkBtn.classList.remove('hidden');
+            } else {
+                linkBtn.classList.add('hidden');
+                linkBtn.href = '#';
+            }
+            
+            // Re-targeting the span inside the AI div instead of the whole div to keep the spark icon intact
+            document.getElementById('aiInsightText').innerText = aiInsight || 'Nenhum insight gerado.';
+            
+            document.getElementById('taskModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('taskModal').classList.add('hidden');
+        }
+
+        // Dark Mode Configurator
+        const moonIcon = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>';
+        const sunIcon = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>';
+
+        function updateIcon() {
+            const isDark = document.documentElement.classList.contains('dark');
+            document.getElementById('themeIcon').innerHTML = isDark ? sunIcon : moonIcon;
+        }
+
+        function toggleDarkMode() {
+            document.documentElement.classList.toggle('dark');
+            const isDark = document.documentElement.classList.contains('dark');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            updateIcon();
+        }
+        
+        updateIcon();
+        
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('taskModal');
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+    </script>
+</body>
+</html>
