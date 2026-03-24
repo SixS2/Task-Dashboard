@@ -14,10 +14,11 @@ public class TaskDto implements Comparable<TaskDto> {
     private String formattedDate;
     private String formattedEndDate;
     private String aiInsight;
+    private String turma;
 
     public TaskDto() {}
 
-    public TaskDto(String title, String course, String url, String description, ZonedDateTime startDateTime, ZonedDateTime endDateTime, String formattedDate, String formattedEndDate, String aiInsight) {
+    public TaskDto(String title, String course, String url, String description, ZonedDateTime startDateTime, ZonedDateTime endDateTime, String formattedDate, String formattedEndDate, String aiInsight, String turma) {
         this.title = title;
         this.course = course;
         this.url = url;
@@ -27,6 +28,7 @@ public class TaskDto implements Comparable<TaskDto> {
         this.formattedDate = formattedDate;
         this.formattedEndDate = formattedEndDate;
         this.aiInsight = aiInsight;
+        this.turma = turma;
     }
 
     public String getTitle() { return title; }
@@ -55,6 +57,9 @@ public class TaskDto implements Comparable<TaskDto> {
 
     public String getAiInsight() { return aiInsight; }
     public void setAiInsight(String aiInsight) { this.aiInsight = aiInsight; }
+
+    public String getTurma() { return turma; }
+    public void setTurma(String turma) { this.turma = turma; }
     
     @Override
     public int compareTo(TaskDto o) {

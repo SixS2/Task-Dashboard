@@ -33,6 +33,9 @@ public class CalendarService {
     @Value("${calendar.url}")
     private String calendarUrl;
 
+    @Value("${calendar.turmab.url:}")
+    private String calendarTurmaBUrl;
+
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
     private List<TaskDto> cachedTasks = null;
@@ -46,7 +49,24 @@ public class CalendarService {
         }
         
         List<TaskDto> tasks = new ArrayList<>();
-        try (InputStream inputStream = URI.create(calendarUrl).toURL().openStream()) {
+        tasks.addAll(fetchTasksFromUrl(calendarUrl, "Turma A"));
+        
+        if (calendarTurmaBUrl != null && !calendarTurmaBUrl.trim().isEmpty()) {
+            tasks.addAll(fetchTasksFromUrl(calendarTurmaBUrl, "Turma B"));
+        }
+        
+        Collections.sort(tasks);
+        aiService.fillInsights(tasks);
+        
+        this.cachedTasks = tasks;
+        this.lastFetchTime = System.currentTimeMillis();
+        
+        return tasks;
+    }
+
+    private List<TaskDto> fetchTasksFromUrl(String urlStr, String turmaStr) {
+        List<TaskDto> tasks = new ArrayList<>();
+        try (InputStream inputStream = URI.create(urlStr).toURL().openStream()) {
             CalendarBuilder builder = new CalendarBuilder();
             Calendar calendar = builder.build(inputStream);
 
@@ -94,6 +114,7 @@ public class CalendarService {
                         dto.setDescription(description);
                         dto.setStartDateTime(eventDate);
                         dto.setFormattedDate(eventDate.format(FORMATTER));
+                        dto.setTurma(turmaStr);
                         
                         DtEnd dtEnd = event.getEndDate();
                         if (dtEnd != null && dtEnd.getDate() != null) {
@@ -113,16 +134,8 @@ public class CalendarService {
                 }
             }
         } catch (Exception e) {
-            System.err.println("Erro ao buscar calendário: " + e.getMessage());
-            // Retorna lista vazia em caso de falha.
+            System.err.println("Erro ao buscar calendário para " + turmaStr + ": " + e.getMessage());
         }
-        
-        Collections.sort(tasks);
-        aiService.fillInsights(tasks);
-        
-        this.cachedTasks = tasks;
-        this.lastFetchTime = System.currentTimeMillis();
-        
         return tasks;
     }
 }

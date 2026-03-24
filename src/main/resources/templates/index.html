@@ -85,7 +85,8 @@
                  th:data-date="${task.formattedDate}" 
                  th:data-enddate="${task.formattedEndDate}" 
                  th:data-insight="${task.aiInsight}" 
-                 onclick="openTaskModal(this.getAttribute('data-title'), this.getAttribute('data-course'), this.getAttribute('data-url'), this.getAttribute('data-desc'), this.getAttribute('data-date'), this.getAttribute('data-enddate'), this.getAttribute('data-insight'))" 
+                 th:data-turma="${task.turma}"
+                 onclick="openTaskModal(this.getAttribute('data-title'), this.getAttribute('data-course'), this.getAttribute('data-url'), this.getAttribute('data-desc'), this.getAttribute('data-date'), this.getAttribute('data-enddate'), this.getAttribute('data-insight'), this.getAttribute('data-turma'))" 
                  class="bg-white dark:bg-slate-800 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 border border-slate-100 dark:border-slate-700 flex flex-col cursor-pointer group transform hover:-translate-y-1">
                 <div class="p-6 flex-grow">
                      <div class="flex items-center justify-between mb-4">
@@ -95,7 +96,11 @@
                             12/10/2026 14:00
                         </span>
                     </div>
-                    <p class="text-xs font-bold text-teal-600 dark:text-teal-500 mb-1 uppercase tracking-wider" th:if="${task.course != 'Geral'}" th:text="${task.course}">MATÉRIA</p>
+                    <p class="text-xs font-bold text-teal-600 dark:text-teal-500 mb-1 uppercase tracking-wider" th:if="${task.course != 'Geral' or task.turma != null}">
+                        <span th:if="${task.course != 'Geral'}" th:text="${task.course}">MATÉRIA</span>
+                        <span th:if="${task.course != 'Geral' and task.turma != null}"> - </span>
+                        <span th:if="${task.turma != null}" th:text="${task.turma}">TURMA</span>
+                    </p>
                     <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2 transition-colors group-hover:text-teal-600 dark:group-hover:text-teal-400" th:text="${task.title}">Título da Tarefa</h3>
                     <p class="text-sm text-slate-600 dark:text-slate-400 line-clamp-3 transition-colors" th:text="${task.description}">Descrição</p>
                 </div>
@@ -154,9 +159,13 @@
     </div>
 
     <script>
-        function openTaskModal(title, course, url, desc, date, endDate, aiInsight) {
+        function openTaskModal(title, course, url, desc, date, endDate, aiInsight, turma) {
             document.getElementById('modalTitle').innerText = title;
-            document.getElementById('modalCourse').innerText = course !== 'Geral' ? course : '';
+            let courseText = course !== 'Geral' ? course : '';
+            if (turma) {
+                courseText += (courseText ? ' - ' : '') + turma;
+            }
+            document.getElementById('modalCourse').innerText = courseText;
             document.getElementById('modalDesc').innerText = desc || 'Sem descrição detalhada cadastrada.';
             
             let dateStr = "Iniciado: " + date;
