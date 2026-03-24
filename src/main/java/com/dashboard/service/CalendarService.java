@@ -43,7 +43,7 @@ public class CalendarService {
     private static final long CACHE_DURATION_MS = 5 * 60 * 1000; // 5 minutos
     private static final java.util.regex.Pattern URL_PATTERN = java.util.regex.Pattern.compile("https?://[^\\s\\r\\n]+");
 
-    public List<TaskDto> getUpcomingTasks() {
+    public synchronized List<TaskDto> getUpcomingTasks() {
         if (cachedTasks != null && (System.currentTimeMillis() - lastFetchTime < CACHE_DURATION_MS)) {
             return cachedTasks;
         }
@@ -66,6 +66,13 @@ public class CalendarService {
 
     private List<TaskDto> fetchTasksFromUrl(String urlStr, String turmaStr) {
         List<TaskDto> tasks = new ArrayList<>();
+        
+        // Bloqueia Server-Side Request Forgery - Apenas aceita URLs legítimas da universidade
+        if (urlStr == null || !urlStr.startsWith("https://ava.catolica.edu.br")) {
+            System.err.println("URL de calendário inválida ou não autorizada para " + turmaStr + ": " + urlStr);
+            return tasks;
+        }
+
         try (InputStream inputStream = URI.create(urlStr).toURL().openStream()) {
             CalendarBuilder builder = new CalendarBuilder();
             Calendar calendar = builder.build(inputStream);
