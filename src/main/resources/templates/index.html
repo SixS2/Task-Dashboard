@@ -66,8 +66,13 @@
                 </div>
             </div>
         </div>
-        <div class="mb-6 flex justify-between items-center">
-            <h2 class="text-2xl font-bold text-slate-800 dark:text-white mb-4 sm:mb-0 transition-colors">Tarefas Visíveis (<span th:text="${#lists.size(tasks)}">0</span>)</h2>
+        <div class="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <h2 class="text-2xl font-bold text-slate-800 dark:text-white transition-colors">Tarefas Visíveis (<span id="visibleCount" th:text="${#lists.size(tasks)}">0</span>)</h2>
+            <div class="flex flex-wrap gap-2 bg-slate-100 dark:bg-slate-800 p-1.5 rounded-lg border border-slate-200 dark:border-slate-700">
+                <button onclick="filterTasks('all')" id="btn-filter-all" class="px-4 py-2 text-sm font-semibold rounded-md text-teal-700 bg-white shadow-sm ring-1 ring-slate-200 dark:ring-slate-600 dark:bg-slate-700 dark:text-teal-400 transition-all">Todas</button>
+                <button onclick="filterTasks('Turma A')" id="btn-filter-Turma A" class="px-4 py-2 text-sm font-medium rounded-md text-slate-600 hover:text-slate-800 hover:bg-slate-200/50 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-700/50 transition-all">Turma A</button>
+                <button onclick="filterTasks('Turma B')" id="btn-filter-Turma B" class="px-4 py-2 text-sm font-medium rounded-md text-slate-600 hover:text-slate-800 hover:bg-slate-200/50 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-700/50 transition-all">Turma B</button>
+            </div>
         </div>
         <div th:if="${#lists.isEmpty(tasks)}" class="bg-white dark:bg-slate-800 rounded-lg shadow-sm p-8 text-center border border-slate-100 dark:border-slate-700 transition-colors">
             <svg class="mx-auto h-12 w-12 text-slate-400 dark:text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -87,7 +92,7 @@
                  th:data-insight="${task.aiInsight}" 
                  th:data-turma="${task.turma}"
                  onclick="openTaskModal(this.getAttribute('data-title'), this.getAttribute('data-course'), this.getAttribute('data-url'), this.getAttribute('data-desc'), this.getAttribute('data-date'), this.getAttribute('data-enddate'), this.getAttribute('data-insight'), this.getAttribute('data-turma'))" 
-                 class="bg-white dark:bg-slate-800 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 border border-slate-100 dark:border-slate-700 flex flex-col cursor-pointer group transform hover:-translate-y-1">
+                 class="task-card bg-white dark:bg-slate-800 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 border border-slate-100 dark:border-slate-700 flex flex-col cursor-pointer group transform hover:-translate-y-1">
                 <div class="p-6 flex-grow">
                      <div class="flex items-center justify-between mb-4">
                         <span class="px-3 py-1 text-xs font-semibold rounded-full whitespace-nowrap transition-colors"
@@ -212,13 +217,43 @@
         
         updateIcon();
         
-        // Close modal when clicking outside
         window.onclick = function(event) {
             const modal = document.getElementById('taskModal');
             if (event.target == modal) {
                 closeModal();
             }
         }
+        
+        function filterTasks(turma) {
+            const cards = document.querySelectorAll('.task-card');
+            let visibleCount = 0;
+            
+            cards.forEach(card => {
+                const cardTurma = card.getAttribute('data-turma');
+                if (turma === 'all' || cardTurma === turma) {
+                    card.style.display = 'flex';
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+            
+            document.getElementById('visibleCount').innerText = visibleCount;
+            
+            // Update button styles
+            const allBtns = ['all', 'Turma A', 'Turma B'];
+            allBtns.forEach(btnClass => {
+                const btn = document.getElementById('btn-filter-' + btnClass);
+                if (btn) {
+                    if (btnClass === turma) {
+                        btn.className = "px-4 py-2 text-sm font-semibold rounded-md text-teal-700 bg-white shadow-sm ring-1 ring-slate-200 dark:ring-slate-600 dark:bg-slate-700 dark:text-teal-400 transition-all";
+                    } else {
+                        btn.className = "px-4 py-2 text-sm font-medium rounded-md text-slate-600 hover:text-slate-800 hover:bg-slate-200/50 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-700/50 transition-all";
+                    }
+                }
+            });
+        }
+
     </script>
 </body>
 </html>
