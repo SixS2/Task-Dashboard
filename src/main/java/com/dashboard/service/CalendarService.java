@@ -73,7 +73,11 @@ public class CalendarService {
             return tasks;
         }
 
-        try (InputStream inputStream = URI.create(urlStr).toURL().openStream()) {
+        try {
+            java.net.URLConnection conn = URI.create(urlStr).toURL().openConnection();
+            conn.setConnectTimeout(10_000); // 10 segundos
+            conn.setReadTimeout(10_000);    // 10 segundos
+            InputStream inputStream = conn.getInputStream();
             CalendarBuilder builder = new CalendarBuilder();
             Calendar calendar = builder.build(inputStream);
 

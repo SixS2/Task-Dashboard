@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Task Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
+    <script th:attr="nonce=${cspNonce}">
         tailwind.config = {
             darkMode: 'class',
             theme: {
@@ -25,6 +25,16 @@
         }
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Scrollbar minimalista */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(94,234,212,0.3); border-radius: 999px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(94,234,212,0.5); }
+        .dark ::-webkit-scrollbar-thumb { background: rgba(94,234,212,0.15); }
+        .dark ::-webkit-scrollbar-thumb:hover { background: rgba(94,234,212,0.3); }
+        html { scrollbar-width: thin; scrollbar-color: rgba(94,234,212,0.3) transparent; }
+    </style>
 </head>
 
 <body
@@ -44,7 +54,7 @@
                             class="font-bold text-lg sm:text-xl tracking-tight truncate max-w-[200px] sm:max-w-none">Dashboard</span>
                     </div>
                 </div>
-                <button onclick="toggleDarkMode()" aria-label="Alternar Modo Escuro"
+                <button id="btnDarkMode" aria-label="Alternar Modo Escuro"
                     class="p-2 ml-2 sm:ml-4 rounded-full bg-teal-500 hover:bg-teal-700 dark:bg-slate-700 dark:hover:bg-slate-600 text-white transition-all transform hover:scale-105 shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 dark:focus:ring-offset-slate-800 dark:focus:ring-slate-400 flex-shrink-0">
                     <svg id="themeIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -88,12 +98,12 @@
                     id="visibleCount" th:text="${#lists.size(tasks)}">0</span>)</h2>
             <div
                 class="flex flex-wrap gap-2 bg-slate-100 dark:bg-slate-800 p-1.5 rounded-lg border border-slate-200 dark:border-slate-700">
-                <button onclick="filterTasks('all')" id="btn-filter-all"
+                <button id="btn-filter-all"
                     class="px-4 py-2 text-sm font-semibold rounded-md text-teal-700 bg-white shadow-sm ring-1 ring-slate-200 dark:ring-slate-600 dark:bg-slate-700 dark:text-teal-400 transition-all">Todas</button>
-                <button onclick="filterTasks('Turma A')" id="btn-filter-Turma A"
+                <button id="btn-filter-Turma A"
                     class="px-4 py-2 text-sm font-medium rounded-md text-slate-600 hover:text-slate-800 hover:bg-slate-200/50 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-700/50 transition-all">Turma
                     A</button>
-                <button onclick="filterTasks('Turma B')" id="btn-filter-Turma B"
+                <button id="btn-filter-Turma B"
                     class="px-4 py-2 text-sm font-medium rounded-md text-slate-600 hover:text-slate-800 hover:bg-slate-200/50 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-700/50 transition-all">Turma
                     B</button>
             </div>
@@ -113,7 +123,7 @@
                 th:data-url="${task.url}" th:data-desc="${task.description}" th:data-date="${task.formattedDate}"
                 th:data-enddate="${task.formattedEndDate}" th:data-insight="${task.aiInsight}"
                 th:data-turma="${task.turma}"
-                onclick="openTaskModal(this.getAttribute('data-title'), this.getAttribute('data-course'), this.getAttribute('data-url'), this.getAttribute('data-desc'), this.getAttribute('data-date'), this.getAttribute('data-enddate'), this.getAttribute('data-insight'), this.getAttribute('data-turma'))"
+
                 class="task-card bg-white dark:bg-slate-800 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 border border-slate-100 dark:border-slate-700 flex flex-col cursor-pointer group transform hover:-translate-y-1">
                 <div class="p-6 flex-grow">
                     <div class="flex items-center justify-between mb-4">
@@ -194,8 +204,7 @@
             class="relative top-20 mx-auto p-6 w-11/12 md:w-3/4 max-w-2xl shadow-2xl rounded-2xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 transition-colors">
             <div class="flex justify-between items-center pb-4 border-b border-slate-100 dark:border-slate-700">
                 <p id="modalDate" class="text-sm font-semibold text-teal-600 dark:text-teal-400"></p>
-                <div class="cursor-pointer z-50 p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-white transition-colors"
-                    onclick="closeModal()">
+                <div id="btnCloseModalX" class="cursor-pointer z-50 p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-white transition-colors">
                     <svg class="fill-current" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
                         viewBox="0 0 18 18">
                         <path
@@ -238,15 +247,15 @@
                                 d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
                         </svg>
                     </a>
-                    <button type="button"
+                    <button id="btnCloseModal" type="button"
                         class="w-full sm:w-auto px-5 py-3 sm:py-2.5 rounded-lg text-sm font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600 transition-colors"
-                        onclick="closeModal()">Fechar</button>
+                        >Fechar</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <script>
+    <script th:attr="nonce=${cspNonce}">
         function openTaskModal(title, course, url, desc, date, endDate, aiInsight, turma) {
             document.getElementById('modalTitle').innerText = title;
             let courseText = course !== 'Geral' ? course : '';
@@ -297,12 +306,36 @@
 
         updateIcon();
 
-        window.onclick = function (event) {
-            const modal = document.getElementById('taskModal');
-            if (event.target == modal) {
+        // === Event Listeners (substituem onclick inline para compatibilidade com CSP nonce) ===
+        document.getElementById('btnDarkMode').addEventListener('click', toggleDarkMode);
+        document.getElementById('btn-filter-all').addEventListener('click', function() { filterTasks('all'); });
+        document.getElementById('btn-filter-Turma A').addEventListener('click', function() { filterTasks('Turma A'); });
+        document.getElementById('btn-filter-Turma B').addEventListener('click', function() { filterTasks('Turma B'); });
+        document.getElementById('btnCloseModalX').addEventListener('click', closeModal);
+        document.getElementById('btnCloseModal').addEventListener('click', closeModal);
+
+        // Task cards — event delegation
+        document.querySelectorAll('.task-card').forEach(function(card) {
+            card.addEventListener('click', function() {
+                openTaskModal(
+                    this.getAttribute('data-title'),
+                    this.getAttribute('data-course'),
+                    this.getAttribute('data-url'),
+                    this.getAttribute('data-desc'),
+                    this.getAttribute('data-date'),
+                    this.getAttribute('data-enddate'),
+                    this.getAttribute('data-insight'),
+                    this.getAttribute('data-turma')
+                );
+            });
+        });
+
+        // Fechar modal ao clicar fora
+        document.getElementById('taskModal').addEventListener('click', function(event) {
+            if (event.target === this) {
                 closeModal();
             }
-        }
+        });
 
         function filterTasks(turma) {
             const cards = document.querySelectorAll('.task-card');
