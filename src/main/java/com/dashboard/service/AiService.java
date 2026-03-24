@@ -39,17 +39,13 @@ public class AiService {
 
     public String generateMotivationalSummary(List<TaskDto> tasks) {
         if (tasks.isEmpty()) {
-            return "Parabéns! Nenhuma tarefa urgente para os próximos 7 dias. Aproveite para descansar ou adiantar matérias! 🎉🛋️";
+            return "O cronograma do AVA não possui tarefas pendentes no momento. Aproveite para revisar materiais antigos ou descansar! 🎉🛋️";
         }
 
-        if (tasks.size() >= 5) {
-            return "Alerta de semana intensa! Você tem " + tasks.size() + " tarefas agendadas. Organize bem seus horários, faça pausas estratégicas e tenha foco total! ⏰🔋";
-        }
-        
         Random rand = new Random();
         String randomMsg = motivationalMessages.get(rand.nextInt(motivationalMessages.size()));
         
-        return "Você tem " + tasks.size() + " tarefas para os próximos dias. " + randomMsg;
+        return "Fique de olho nos prazos do AVA! " + randomMsg;
     }
 
     private final Map<String, String> cache = new java.util.concurrent.ConcurrentHashMap<>();
