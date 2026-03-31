@@ -6,6 +6,7 @@ import com.dashboard.service.CalendarService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.List;
 
@@ -29,5 +30,11 @@ public class DashboardController {
         model.addAttribute("aiMessage", aiMessage);
 
         return "index";
+    }
+
+    @PostMapping("/sync")
+    public String sync() {
+        calendarService.clearCache();
+        return "redirect:/";
     }
 }

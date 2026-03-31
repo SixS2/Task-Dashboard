@@ -16,6 +16,7 @@ import java.net.URI;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.LocalDate;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -39,13 +40,14 @@ public class CalendarService {
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
     private List<TaskDto> cachedTasks = null;
-    private long lastFetchTime = 0;
-    private static final long CACHE_DURATION_MS = 5 * 60 * 1000;
+    private LocalDate lastFetchDate = null;
+    private long lastClearTime = 0;
+    private static final long CLEAR_COOLDOWN_MS = 60 * 1000; // 1 minuto
     private static final java.util.regex.Pattern URL_PATTERN = java.util.regex.Pattern
             .compile("https?://[^\\s\\r\\n]+");
 
     public synchronized List<TaskDto> getUpcomingTasks() {
-        if (cachedTasks != null && (System.currentTimeMillis() - lastFetchTime < CACHE_DURATION_MS)) {
+        if (cachedTasks != null && lastFetchDate != null && lastFetchDate.equals(LocalDate.now())) {
             return cachedTasks;
         }
 
@@ -60,9 +62,18 @@ public class CalendarService {
         aiService.fillInsights(tasks);
 
         this.cachedTasks = tasks;
-        this.lastFetchTime = System.currentTimeMillis();
+        this.lastFetchDate = LocalDate.now();
 
         return tasks;
+    }
+
+    public synchronized void clearCache() {
+        if (System.currentTimeMillis() - lastClearTime < CLEAR_COOLDOWN_MS) {
+            return; // Impede spam de requisições
+        }
+        this.cachedTasks = null;
+        this.lastFetchDate = null;
+        this.lastClearTime = System.currentTimeMillis();
     }
 
     private List<TaskDto> fetchTasksFromUrl(String urlStr, String turmaStr) {
