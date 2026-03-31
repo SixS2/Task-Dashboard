@@ -31,37 +31,71 @@ public class CalendarService {
         this.aiService = aiService;
     }
 
-    @Value("${calendar.url}")
-    private String calendarUrl;
+    @Value("${calendar.matutino.a.url:}")
+    private String calendarMatutinoAUrl;
 
-    @Value("${calendar.turmab.url:}")
-    private String calendarTurmaBUrl;
+    @Value("${calendar.matutino.b.url:}")
+    private String calendarMatutinoBUrl;
+
+    @Value("${calendar.noturno.a.url:}")
+    private String calendarNoturnoAUrl;
+
+    @Value("${calendar.noturno.b.url:}")
+    private String calendarNoturnoBUrl;
 
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
-    private List<TaskDto> cachedTasks = null;
+    private List<TaskDto> cachedMatutinoTasks = null;
+    private List<TaskDto> cachedNoturnoTasks = null;
     private LocalDate lastFetchDate = null;
     private long lastClearTime = 0;
     private static final long CLEAR_COOLDOWN_MS = 60 * 1000; // 1 minuto
     private static final java.util.regex.Pattern URL_PATTERN = java.util.regex.Pattern
             .compile("https?://[^\\s\\r\\n]+");
 
-    public synchronized List<TaskDto> getUpcomingTasks() {
-        if (cachedTasks != null && lastFetchDate != null && lastFetchDate.equals(LocalDate.now())) {
-            return cachedTasks;
+    public synchronized List<TaskDto> getMatutinoTasks() {
+        if (cachedMatutinoTasks != null && lastFetchDate != null && lastFetchDate.equals(LocalDate.now())) {
+            return cachedMatutinoTasks;
         }
 
         List<TaskDto> tasks = new ArrayList<>();
-        tasks.addAll(fetchTasksFromUrl(calendarUrl, "Turma A"));
+        
+        if (calendarMatutinoAUrl != null && !calendarMatutinoAUrl.trim().isEmpty()) {
+            tasks.addAll(fetchTasksFromUrl(calendarMatutinoAUrl, "Turma A"));
+        }
 
-        if (calendarTurmaBUrl != null && !calendarTurmaBUrl.trim().isEmpty()) {
-            tasks.addAll(fetchTasksFromUrl(calendarTurmaBUrl, "Turma B"));
+        if (calendarMatutinoBUrl != null && !calendarMatutinoBUrl.trim().isEmpty()) {
+            tasks.addAll(fetchTasksFromUrl(calendarMatutinoBUrl, "Turma B"));
         }
 
         Collections.sort(tasks);
         aiService.fillInsights(tasks);
 
-        this.cachedTasks = tasks;
+        this.cachedMatutinoTasks = tasks;
+        this.lastFetchDate = LocalDate.now();
+
+        return tasks;
+    }
+
+    public synchronized List<TaskDto> getNoturnoTasks() {
+        if (cachedNoturnoTasks != null && lastFetchDate != null && lastFetchDate.equals(LocalDate.now())) {
+            return cachedNoturnoTasks;
+        }
+
+        List<TaskDto> tasks = new ArrayList<>();
+        
+        if (calendarNoturnoAUrl != null && !calendarNoturnoAUrl.trim().isEmpty()) {
+            tasks.addAll(fetchTasksFromUrl(calendarNoturnoAUrl, "Turma A"));
+        }
+
+        if (calendarNoturnoBUrl != null && !calendarNoturnoBUrl.trim().isEmpty()) {
+            tasks.addAll(fetchTasksFromUrl(calendarNoturnoBUrl, "Turma B"));
+        }
+
+        Collections.sort(tasks);
+        aiService.fillInsights(tasks);
+
+        this.cachedNoturnoTasks = tasks;
         this.lastFetchDate = LocalDate.now();
 
         return tasks;
@@ -71,7 +105,8 @@ public class CalendarService {
         if (System.currentTimeMillis() - lastClearTime < CLEAR_COOLDOWN_MS) {
             return; // Impede spam de requisições
         }
-        this.cachedTasks = null;
+        this.cachedMatutinoTasks = null;
+        this.cachedNoturnoTasks = null;
         this.lastFetchDate = null;
         this.lastClearTime = System.currentTimeMillis();
     }

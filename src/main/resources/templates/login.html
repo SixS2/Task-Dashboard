@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title>Acesso Console - Task Dashboard</title>
+    <!-- Google Fonts: Josefin Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script th:attr="nonce=${cspNonce}">
+        tailwind.config = {
+            darkMode: 'class',
+            theme: { 
+                extend: {
+                    fontFamily: { sans: ['Josefin Sans', 'sans-serif'] },
+                    backgroundImage: {
+                        'aero-navy': 'linear-gradient(135deg, #020617 0%, #0f172a 50%, #1e293b 100%)',
+                        'aero-light': 'linear-gradient(135deg, #f8fafc 0%, #cbd5e1 70%, #94a3b8 100%)',
+                        'gel-button': 'linear-gradient(to bottom, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.1) 45%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.2) 100%)',
+                    },
+                    boxShadow: {
+                        'glass': '0 8px 32px 0 rgba(15, 23, 42, 0.3)',
+                        'gel': 'inset 0 1px 2px rgba(255,255,255,0.5), inset 0 -1px 2px rgba(0,0,0,0.2), 0 4px 12px rgba(0,0,0,0.1)',
+                    },
+                    borderRadius: { '4xl': '2rem', '5xl': '2.5rem' }
+                } 
+            }
+        }
+    </script>
+    <style>
+        /* Glassmorphism Aero Style */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.45);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 12px 40px -10px rgba(0, 0, 0, 0.2);
+        }
+        .dark .glass-panel {
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Decorative Bubbles - Locked to Background */
+        .bubble-container {
+            position: fixed;
+            inset: 0;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .bubble {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.05) 60%, transparent 80%);
+            box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.3), 0 10px 30px rgba(0, 0, 0, 0.05);
+            mix-blend-mode: overlay;
+        }
+        .dark .bubble {
+            background: radial-gradient(circle at 30% 30%, rgba(15, 23, 42, 0.5), rgba(15, 23, 42, 0.2) 60%, transparent 80%);
+        }
+
+        /* Gel Button Aero Feel */
+        .btn-gel {
+            background-image: theme('backgroundImage.gel-button');
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .btn-gel:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.2); filter: brightness(1.1); }
+        .btn-gel:active { transform: translateY(0); filter: brightness(0.9); }
+
+        body {
+            overflow: hidden !important; /* Force no scroll on login */
+        }
+    </style>
+</head>
+<body class="bg-aero-light dark:bg-aero-navy min-h-screen text-slate-800 dark:text-slate-100 font-sans transition-colors duration-500 relative flex flex-col items-center justify-center p-4">
+
+    <!-- Locked Aero Bubbles -->
+    <div class="bubble-container">
+        <div class="bubble w-[400px] h-[400px] -top-[100px] -left-[100px] opacity-70"></div>
+        <div class="bubble w-[300px] h-[300px] top-1/2 -right-[50px] opacity-40"></div>
+        <div class="bubble w-[200px] h-[200px] bottom-[50px] left-1/4 opacity-30"></div>
+    </div>
+
+    <!-- Theme Toggle at Top -->
+    <div class="absolute top-6 right-6 z-50">
+        <button id="theme-toggle" class="flex items-center justify-center p-3.5 rounded-2xl bg-white/70 dark:bg-black/40 border border-white/60 dark:border-white/10 shadow-gel text-slate-700 dark:text-slate-300 hover:scale-110 active:scale-95 transition-all">
+            <svg id="theme-icon-dark" class="hidden w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+            <svg id="theme-icon-light" class="hidden w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+        </button>
+    </div>
+
+    <!-- Login Card -->
+    <main class="w-full max-w-md relative z-10">
+        <div class="glass-panel rounded-5xl p-8 sm:p-12 shadow-2xl border-t-2 border-white/60 dark:border-white/20 ring-1 ring-black/5 transition-all hover:scale-[1.01]">
+            <div class="text-center mb-10">
+                <div class="inline-block bg-slate-900 dark:bg-white p-3.5 rounded-3xl text-white dark:text-slate-900 shadow-gel mb-6">
+                    <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>
+                </div>
+                <h1 class="text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Console<span class="text-slate-400 font-black ml-2">Acesso</span></h1>
+                <p class="mt-2 text-[10px] font-black uppercase tracking-[0.4em] text-slate-500 dark:text-slate-400">Ambiente de Gestão Executiva</p>
+            </div>
+
+            <div th:if="${error}" class="mb-8 p-4 bg-red-100/80 dark:bg-red-900/40 border border-red-200 dark:border-red-800 rounded-3xl text-red-700 dark:text-red-400 text-[10px] font-black uppercase tracking-widest text-center shadow-lg animate-pulse">
+                Identidade não reconhecida. Revise seus dados.
+            </div>
+
+            <form th:action="@{/login}" method="post" class="space-y-6">
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2">Usuário de Console</label>
+                    <input type="text" name="username" required placeholder="Admin ID"
+                        class="w-full px-6 py-4 bg-white/70 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-3xl focus:ring-4 focus:ring-slate-500/20 outline-none text-slate-900 dark:text-white font-black transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500">
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2">Protocolo de Segurança</label>
+                    <input type="password" name="password" required placeholder="••••••••"
+                        class="w-full px-6 py-4 bg-white/70 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-3xl focus:ring-4 focus:ring-slate-500/20 outline-none text-slate-900 dark:text-white font-black transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500">
+                </div>
+
+                <div class="pt-4">
+                    <button type="submit" class="btn-gel w-full py-5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-xs font-black uppercase tracking-[0.2em] rounded-3xl shadow-xl flex items-center justify-center gap-4">
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+                        Autenticar Console
+                    </button>
+                </div>
+            </form>
+
+            <div class="mt-10 text-center">
+                <a href="/" class="text-[9px] font-black uppercase tracking-widest text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors flex items-center justify-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+                    Voltar ao Mural
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Theme Logic Script -->
+    <script th:attr="nonce=${cspNonce}">
+        const themeIconDark = document.getElementById('theme-icon-dark');
+        const themeIconLight = document.getElementById('theme-icon-light');
+
+        function updateThemeIcons() {
+            const isDark = document.documentElement.classList.contains('dark');
+            if (isDark) {
+                themeIconDark.classList.add('hidden');
+                themeIconLight.classList.remove('hidden');
+            } else {
+                themeIconDark.classList.remove('hidden');
+                themeIconLight.classList.add('hidden');
+            }
+        }
+
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+        window.addEventListener('load', updateThemeIcons);
+
+        document.getElementById('theme-toggle').addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            if (document.documentElement.classList.contains('dark')) {
+                localStorage.setItem('theme', 'dark');
+            } else {
+                localStorage.setItem('theme', 'light');
+            }
+            updateThemeIcons();
+        });
+    </script>
+</body>
+</html>
