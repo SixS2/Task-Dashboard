@@ -129,6 +129,18 @@ public class AvisoService {
         addAviso(aviso, null, null);
     }
 
+    private void deleteMediaFile(String url) {
+        if (url != null && url.startsWith("/images/")) {
+            String fileName = url.substring("/images/".length());
+            Path filePath = Paths.get(IMAGES_DIR + fileName);
+            try {
+                Files.deleteIfExists(filePath);
+            } catch (IOException e) {
+                System.err.println("Erro ao deletar arquivo: " + e.getMessage());
+            }
+        }
+    }
+
     public synchronized void removeAviso(String id) {
         Aviso toRemove = avisos.stream()
                 .filter(a -> a.getId().equals(id))
@@ -136,18 +148,28 @@ public class AvisoService {
                 .orElse(null);
         
         if (toRemove != null) {
-            String imgUrl = toRemove.getImageUrl();
-            if (imgUrl != null && imgUrl.startsWith("/images/")) {
-                String fileName = imgUrl.substring("/images/".length());
-                Path filePath = Paths.get(IMAGES_DIR + fileName);
-                try {
-                    Files.deleteIfExists(filePath);
-                } catch (IOException e) {
-                    System.err.println("Erro ao deletar arquivo de imagem: " + e.getMessage());
-                }
-            }
+            deleteMediaFile(toRemove.getImageUrl());
+            deleteMediaFile(toRemove.getAuthorImageUrl());
             avisos.remove(toRemove);
             saveToFile();
+        }
+    }
+
+    // Limpeza automatica de avisos expirados (roda a cada hora)
+    @org.springframework.scheduling.annotation.Scheduled(fixedRate = 3600000)
+    public synchronized void cleanupExpiredAvisos() {
+        java.util.List<Aviso> expired = avisos.stream()
+                .filter(Aviso::isExpired)
+                .collect(java.util.stream.Collectors.toList());
+        
+        if (!expired.isEmpty()) {
+            for (Aviso aviso : expired) {
+                deleteMediaFile(aviso.getImageUrl());
+                deleteMediaFile(aviso.getAuthorImageUrl());
+                avisos.remove(aviso);
+            }
+            saveToFile();
+            System.out.println("Limpeza automatica: " + expired.size() + " avisos expirados removidos.");
         }
     }
 }
