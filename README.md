@@ -6,7 +6,7 @@
 **💡 Idealização e Escopo:** SixS2 
 **💻 Desenvolvimento e Código:** 80% Eu, Inteligência Artificial 20%
 
-Toda a ideia inicial, as regras de negócio e a arquitetura visual foram pensadas por mim para resolver um problema diário com a faculdade. No entanto, **todo o código-fonte (Java, HTML, Tailwind) deste projeto foi gerado e digitado do zero pela Inteligência Artificial**, atuando sob minha coordenação e instruções detalhadas em chat.
+Toda a ideia inicial, as regras de negócio e a arquitetura visual foram pensadas por mim para resolver um problema diário com a faculdade. parte do código-fonte (Java, HTML, Tailwind) deste projeto foi gerado e digitado pela Inteligência Artificial**, atuando sob minha coordenação e instruções detalhadas em chat e revisado por mim.
 
 > ⚠️ **Aviso Importante sobre Inteligência Artificial:** 
 > Este repositório foi construído com o objetivo central de **testar, praticar, conhecer e estudar** o estado atual da Arte das IAs na programação. **Eu NÃO recomendo que você crie códigos ou sistemas inteiros 100% baseados em Inteligências Artificiais** de forma cega. A IA comete erros, toma decisões limitadas e pode gerar gargalos se você não souber o que está acontecendo por trás das cortinas. Use ferramentas de IA para acelerar seus estudos, não para substituir seu conhecimento técnico!
