@@ -4,7 +4,7 @@
 
 ## 📌 Sobre a Autoria do Projeto
 **💡 Idealização e Escopo:** SixS2 
-**💻 Desenvolvimento e Código:** 80% Eu, Inteligência Artificial 20%
+**💻 Desenvolvimento e Código:** Vibe code
 
 Toda a ideia inicial, as regras de negócio e a arquitetura visual foram pensadas por mim para resolver um problema diário com a faculdade. parte do código-fonte (Java, HTML, Tailwind) deste projeto foi gerado e digitado pela Inteligência Artificial**, atuando sob minha coordenação e instruções detalhadas em chat e revisado por mim.
 
