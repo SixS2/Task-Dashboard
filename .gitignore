@@ -79,3 +79,8 @@ application-local.properties
 application-secret.properties
 application-dev.properties
 secrets.properties
+
+# Local data (avisos, images)
+data/
+cookies.txt
+test_*

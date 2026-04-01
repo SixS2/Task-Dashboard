@@ -11,12 +11,17 @@ public class Aviso {
     private String title;
     private String content;
     private String imageUrl;
+    private String color;
+    private String authorName;
+    private String authorImageUrl;
     private LocalDate createdAt;
     private LocalDate expiresAt;
 
     public Aviso() {
         this.id = UUID.randomUUID().toString();
         this.createdAt = LocalDate.now();
+        this.color = "indigo";
+        this.authorName = "Coordenacao";
     }
 
     public String getId() { return id; }
@@ -31,6 +36,15 @@ public class Aviso {
     public String getImageUrl() { return imageUrl; }
     public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
 
+    public String getColor() { return color; }
+    public void setColor(String color) { this.color = color; }
+
+    public String getAuthorName() { return authorName; }
+    public void setAuthorName(String authorName) { this.authorName = authorName; }
+
+    public String getAuthorImageUrl() { return authorImageUrl; }
+    public void setAuthorImageUrl(String authorImageUrl) { this.authorImageUrl = authorImageUrl; }
+
     public LocalDate getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDate createdAt) { this.createdAt = createdAt; }
 
@@ -41,5 +55,12 @@ public class Aviso {
     public boolean isExpired() {
         if (expiresAt == null) return false;
         return LocalDate.now().isAfter(expiresAt);
+    }
+
+    @JsonIgnore
+    public boolean isVideo() {
+        if (imageUrl == null) return false;
+        String lower = imageUrl.toLowerCase();
+        return lower.endsWith(".mp4") || lower.endsWith(".mov") || lower.endsWith(".avi");
     }
 }

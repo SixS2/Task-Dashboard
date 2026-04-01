@@ -25,7 +25,7 @@ public class AvisoService {
     private final File storagePath = new File("data");
     private final File dataFile = new File("data/avisos.json");
     private final String IMAGES_DIR = "data/images/";
-    private final List<String> ALLOWED_EXTENSIONS = List.of(".jpg", ".jpeg", ".png", ".gif", ".webp");
+    private final List<String> ALLOWED_EXTENSIONS = List.of(".jpg", ".jpeg", ".png", ".gif", ".webp", ".mp4", ".mov", ".avi");
     private List<Aviso> avisos = new ArrayList<>();
 
     public AvisoService() {
@@ -78,38 +78,55 @@ public class AvisoService {
         return html.replaceAll("<[^>]*>", "").trim();
     }
 
-    public synchronized void addAviso(Aviso aviso, MultipartFile image) {
+    public synchronized void addAviso(Aviso aviso, MultipartFile image, MultipartFile authorImage) {
         // Sanitize text inputs to prevent XSS
         aviso.setTitle(sanitize(aviso.getTitle()));
         aviso.setContent(sanitize(aviso.getContent()));
+        aviso.setAuthorName(sanitize(aviso.getAuthorName()));
 
+        // Save media attachment
         if (image != null && !image.isEmpty()) {
-            try {
-                String originalFilename = image.getOriginalFilename();
-                String extension = "";
-                if (originalFilename != null && originalFilename.contains(".")) {
-                    extension = originalFilename.substring(originalFilename.lastIndexOf("."));
-                }
-                // Generate a safe unique filename to prevent path traversal
-                String safeFilename = java.util.UUID.randomUUID().toString() + extension.toLowerCase();
-                
-                if (ALLOWED_EXTENSIONS.contains(extension.toLowerCase())) {
-                    Path imagePath = Paths.get(IMAGES_DIR + safeFilename);
-                    Files.copy(image.getInputStream(), imagePath);
-                    aviso.setImageUrl("/images/" + safeFilename);
-                } else {
-                    System.err.println("Extensão de imagem não permitida: " + extension);
-                }
-            } catch (IOException e) {
-                System.err.println("Erro ao salvar imagem: " + e.getMessage());
-            }
+            String savedUrl = saveFile(image);
+            if (savedUrl != null) aviso.setImageUrl(savedUrl);
         }
+
+        // Save author avatar
+        if (authorImage != null && !authorImage.isEmpty()) {
+            String savedUrl = saveFile(authorImage);
+            if (savedUrl != null) aviso.setAuthorImageUrl(savedUrl);
+        }
+
         avisos.add(aviso);
         saveToFile();
     }
 
+    private String saveFile(MultipartFile file) {
+        try {
+            String originalFilename = file.getOriginalFilename();
+            String extension = "";
+            if (originalFilename != null && originalFilename.contains(".")) {
+                extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+            }
+            String safeFilename = java.util.UUID.randomUUID().toString() + extension.toLowerCase();
+            if (ALLOWED_EXTENSIONS.contains(extension.toLowerCase())) {
+                Path filePath = Paths.get(IMAGES_DIR + safeFilename);
+                Files.copy(file.getInputStream(), filePath);
+                return "/images/" + safeFilename;
+            } else {
+                System.err.println("Extensao nao permitida: " + extension);
+            }
+        } catch (IOException e) {
+            System.err.println("Erro ao salvar arquivo: " + e.getMessage());
+        }
+        return null;
+    }
+
+    public synchronized void addAviso(Aviso aviso, MultipartFile image) {
+        addAviso(aviso, image, null);
+    }
+
     public synchronized void addAviso(Aviso aviso) {
-        addAviso(aviso, null);
+        addAviso(aviso, null, null);
     }
 
     public synchronized void removeAviso(String id) {

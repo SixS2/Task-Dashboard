@@ -51,7 +51,8 @@ public class SecurityHeadersFilter implements Filter {
                 "script-src 'self' 'nonce-" + nonce + "' https://cdn.tailwindcss.com; " +
                 "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
                 "font-src 'self' https://fonts.gstatic.com; " +
-                "img-src 'self' data:; " +
+                "img-src 'self' data: blob:; " +
+                "media-src 'self' blob:; " +
                 "connect-src 'self'";
         httpResponse.setHeader("Content-Security-Policy", csp);
 

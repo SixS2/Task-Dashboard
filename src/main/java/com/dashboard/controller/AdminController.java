@@ -77,12 +77,17 @@ public class AdminController {
     public String addAviso(@RequestParam("title") String title,
                            @RequestParam("content") String content,
                            @RequestParam("dias") int diasAtivos,
+                           @RequestParam(value = "color", defaultValue = "indigo") String color,
+                           @RequestParam(value = "authorName", defaultValue = "Coordenacao") String authorName,
+                           @RequestParam(value = "authorImage", required = false) MultipartFile authorImage,
                            @RequestParam(value = "image", required = false) MultipartFile image) {
         Aviso aviso = new Aviso();
         aviso.setTitle(title);
         aviso.setContent(content);
+        aviso.setColor(color);
+        aviso.setAuthorName(authorName != null && !authorName.trim().isEmpty() ? authorName.trim() : "Coordenacao");
         aviso.setExpiresAt(LocalDate.now().plusDays(diasAtivos));
-        avisoService.addAviso(aviso, image);
+        avisoService.addAviso(aviso, image, authorImage);
         return "redirect:/admin";
     }
 
@@ -93,8 +98,22 @@ public class AdminController {
     }
 
     @PostMapping("/admin/sync")
-    public String sync() {
+    public String sync(HttpServletRequest request) {
         calendarService.clearCache();
-        return "redirect:/";
+        String referer = request.getHeader("Referer");
+        return "redirect:" + (referer != null ? referer : "/");
+    }
+
+    // API endpoint for polling (avisos page auto-refresh)
+    @org.springframework.web.bind.annotation.ResponseBody
+    @GetMapping("/api/avisos/count")
+    public java.util.Map<String, Object> avisosCount() {
+        java.util.List<Aviso> active = avisoService.getActiveAvisos();
+        java.util.Map<String, Object> result = new java.util.HashMap<>();
+        result.put("count", active.size());
+        if (!active.isEmpty()) {
+            result.put("latestId", active.get(active.size() - 1).getId());
+        }
+        return result;
     }
 }
